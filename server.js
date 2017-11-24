@@ -13,7 +13,7 @@ app.get('/', function(req, res) {
 
 app.get('/play/:VIDEO', function(req, res) {
 var videoID = req.params.VIDEO.toString();
-  var path = "~/UsbStick/movies" + videoJson[videoID].path
+  var path = "/UsbStick/movies" + videoJson[videoID].path
   const stat = fs.statSync(path)
   const fileSize = stat.size
   const range = req.headers.range
