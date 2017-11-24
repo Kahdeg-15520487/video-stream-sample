@@ -2,19 +2,21 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 const app = express()
+const videoJson = require('./videoJson')
 
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname + '/index.htm'))
+  res.sendFile(path.join(__dirname + '/index.html'))
+// console.log(videoJson["1973"].path)
 })
 
-app.get('/video', function(req, res) {
-  const path = 'assets/sample.mp4'
+app.get('/play/:VIDEO', function(req, res) {
+var videoID = req.params.VIDEO.toString();
+  var path = videoJson[videoID].path
   const stat = fs.statSync(path)
   const fileSize = stat.size
   const range = req.headers.range
-
   if (range) {
     const parts = range.replace(/bytes=/, "").split("-")
     const start = parseInt(parts[0], 10)
