@@ -8,11 +8,10 @@ var mountutil = require('linux-mountutils')
 // Start Of Actual Code
 
 app.use(express.static(path.join(__dirname, 'public'))) // Define Public as Static
-
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname +
-    '/index.html'))
-  // console.log(videoJson["1973"].path)
+res.render("homepage")
 })
 // Get Video To Play
 app.get('/play/:VIDEO', function (req, res) {
