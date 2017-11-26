@@ -53,7 +53,8 @@ if (videoJson.hasOwnProperty(videoID)) {
       fs.createReadStream(path).pipe(res)
     }
   } else {
-    res.send("Video Not Found")
+res.sendFile(path.join(__dirname +
+    '/public/error.html'))
   }
 })
 
