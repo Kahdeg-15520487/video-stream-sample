@@ -17,7 +17,7 @@ app.get('/', function (req, res) {
 // Get Video To Play
 app.get('/play/:VIDEO', function (req, res) {
   var videoID = req.params.VIDEO.toString();
-  if (videoJson[videoID] !== 'undefined') {
+if (videoJson.hasOwnProperty(videoID)) {
     var path = "/home/clarkhacks/UsbStick/movies" + videoJson[videoID].path // Path To Movies
     const stat = fs.statSync(path)
     const fileSize = stat.size
