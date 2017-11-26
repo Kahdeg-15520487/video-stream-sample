@@ -13,7 +13,9 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.15.3",
+    "jade": "^1.11.0",
     "linux-mountutils": "^1.0.2",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "pug": "^2.0.0-rc.4"
   }
 }
