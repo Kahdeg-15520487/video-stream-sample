@@ -17,44 +17,42 @@ app.get('/', function (req, res) {
 // Get Video To Play
 app.get('/play/:VIDEO', function (req, res) {
   var videoID = req.params.VIDEO.toString();
-  if (videoID == XX) {
-var path = "/home/clarkhacks/UsbStick/movies" +
-    videoJson[videoID].path // Path To Movies
-    
-  }
-  else {
-res.send("Video Not Found")
-  }
-  const stat = fs.statSync(path)
-  const fileSize = stat.size
-  const range = req.headers.range
-  if (range) {
-    const parts = range.replace(/bytes=/, "").split("-")
-    const start = parseInt(parts[0], 10)
-    const end = parts[1]
-      ? parseInt(parts[1], 10)
-      : fileSize - 1
+  var path = "/home/clarkhacks/UsbStick/movies" + videoJson[videoID].path // Path To Movies
+if (path !== undefined) {
+const stat = fs.statSync(path)
+const fileSize = stat.size
+const range = req.headers.range
+if (range) {
+  const parts = range.replace(/bytes=/, "").split("-")
+  const start = parseInt(parts[0], 10)
+  const end = parts[1]
+    ? parseInt(parts[1], 10)
+    : fileSize - 1
 
-    const chunksize = (end - start) +
-        1
-    const file = fs.createReadStream(path, {start, end})
-    const head = {
-      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': chunksize,
-      'Content-Type': 'video/mp4'
-    }
-
-    res.writeHead(206, head)
-    file.pipe(res)
-  } else {
-    const head = {
-      'Content-Length': fileSize,
-      'Content-Type': 'video/mp4'
-    }
-    res.writeHead(200, head)
-    fs.createReadStream(path).pipe(res)
+  const chunksize = (end - start) +
+      1
+  const file = fs.createReadStream(path, {start, end})
+  const head = {
+    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+    'Accept-Ranges': 'bytes',
+    'Content-Length': chunksize,
+    'Content-Type': 'video/mp4'
   }
+
+  res.writeHead(206, head)
+  file.pipe(res)
+} else {
+  const head = {
+    'Content-Length': fileSize,
+    'Content-Type': 'video/mp4'
+  }
+  res.writeHead(200, head)
+  fs.createReadStream(path).pipe(res)
+}
+}
+else {
+  res.send("Video Not Found")
+}
 })
 
 app.listen(8087, function () {
