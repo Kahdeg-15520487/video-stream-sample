@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname, 'public'))) // Define Public as Stat
 
 // Mount /dev/sdc1 to ~/UsbStick
 
-mountutil.mount("/dev/sda1", "~/UsbStick", {
+mountutil.mount("/dev/sda1", "/home/clarkhacks/UsbStick/", {
   "createDir": false
 }, function (result) {
   if (result.error) {
