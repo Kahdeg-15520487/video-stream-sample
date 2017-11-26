@@ -17,7 +17,14 @@ app.get('/', function (req, res) {
 // Get Video To Play
 app.get('/play/:VIDEO', function (req, res) {
   var videoID = req.params.VIDEO.toString();
-  var path = "/home/clarkhacks/UsbStick/movies" + videoJson[videoID].path // Path To Movies
+  if (videoID == XX) {
+var path = "/home/clarkhacks/UsbStick/movies" +
+    videoJson[videoID].path // Path To Movies
+    
+  }
+  else {
+res.send("Video Not Found")
+  }
   const stat = fs.statSync(path)
   const fileSize = stat.size
   const range = req.headers.range
