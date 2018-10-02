@@ -12,6 +12,7 @@
   "author": "daspinola",
   "license": "MIT",
   "dependencies": {
+    "config": "^2.0.1",
     "express": "^4.15.3",
     "jade": "^1.11.0",
     "linux-mountutils": "^1.0.2",
