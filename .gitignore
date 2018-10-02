@@ -11,7 +11,7 @@ node_modules
 
 # runtime config
 videoConfig.json
-videoList.json
+videoList.html
 
 # Logs
 logs
