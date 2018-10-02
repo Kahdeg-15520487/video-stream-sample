@@ -1,5 +1,6 @@
 .DS_STORE
-.vsCode/
+bin/
+obj/
 node_modules
 .vscode/*
 !.vscode/settings.json
