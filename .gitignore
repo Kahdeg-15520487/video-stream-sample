@@ -2,11 +2,16 @@
 bin/
 obj/
 node_modules
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# runtime config
+videoConfig.json
+videoList.json
 
 # Logs
 logs

@@ -4,6 +4,8 @@ const path = require('path')
 const app = express()
 //const videoJson = require('./videoJson')
 const videoJson = require('./videoConfig')
+const config = require('./config')
+const port = config["port"]
 var mountutil = require('linux-mountutils')
 
 // Start Of Actual Code
@@ -61,6 +63,6 @@ app.get('/play/:VIDEO', function (req, res) {
   }
 })
 
-app.listen(8087, function () {
+app.listen(parseInt(port), function () {
   console.log('Listening on port 8087!')
 })
