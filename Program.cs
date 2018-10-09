@@ -10,6 +10,10 @@ namespace video_stream_sample
         public string path{get;set;}
         public string name{get;set;}
         public string desc{get;set;}
+
+        public override string ToString(){
+            return $"{name} {desc} {path}";
+        }
     }
     class Program
     {
@@ -70,25 +74,38 @@ for (i = 0; i < coll.length; i++) {
 </body>
 </html>
 ";
+        static string[] ReadConfig(){
+            return File.ReadAllLines("dir.txt");
+        }
+
         static void Main(string[] args)
         {
+            string[] dirs;
+            if(args.Length > 0){
+                dirs = args;
+            }
+            else{
+                dirs = ReadConfig();
+            }
+
             Dictionary<string,VideoConfig> VideoConfigs = new Dictionary<string, VideoConfig>();
             StringBuilder videoList = new StringBuilder();
             int id = 1000;
             using (StringWriter sw = new StringWriter(videoList))
             {
                 sw.WriteLine(templateHead);
-                foreach (var arg in args)
+                foreach (var dir in dirs)
                 {
-                    if(Directory.Exists(arg)){
-                        sw.WriteLine(templateDiv,arg);
-                        foreach (var file in Directory.EnumerateFiles(arg,"*.mp4",SearchOption.TopDirectoryOnly))
+                    if(Directory.Exists(dir)){
+                        sw.WriteLine(templateDiv,dir);
+                        foreach (var file in Directory.EnumerateFiles(dir,"*.mp4",SearchOption.TopDirectoryOnly))
                         {
                             var video = new VideoConfig(){
                                 path = file,
                                 name = Path.GetFileNameWithoutExtension(file),
                                 desc = "lorem"
                             };
+                            Console.WriteLine($"{id} {video}");
                             VideoConfigs.Add(id.ToString(),video);
                             sw.WriteLine($"<a href=\"/play/{id}\">{video.name}</a><br/>");
                             id++;
