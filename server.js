@@ -7,6 +7,7 @@ const videoJson = require('./videoConfig')
 const config = require('./config')
 const port = config["port"]
 var mountutil = require('linux-mountutils')
+const { exec } = require('child_process');
 
 // Start Of Actual Code
 
@@ -17,6 +18,24 @@ app.set("views", path.join(__dirname, "views"))
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/videoList.html')
 })
+app.get('/refresh/',function(req,res){
+  console.log("refresh");
+  exec('dotnet run',(err, stdout, stderr) => {
+    if (err) {
+      // node couldn't execute the command
+      console.log("node couldn't execute the command");
+      console.log("msg: "+err.message);
+      console.log(err.fileName);
+      console.log(err.lineNumber);
+      return;
+    }
+    
+    // the *entire* stdout and stderr (buffered)
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
+  });
+  res.redirect('/');
+});
 // Get Video To Play
 app.get('/play/:VIDEO', function (req, res) {
   var videoID = req.params.VIDEO.toString();

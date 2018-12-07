@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -94,11 +95,21 @@ for (i = 0; i < coll.length; i++) {
             using (StringWriter sw = new StringWriter(videoList))
             {
                 sw.WriteLine(templateHead);
+                sw.WriteLine($"<a href=\"refresh\">refresh</a>");
                 foreach (var dir in dirs)
                 {
+                    if(string.IsNullOrWhiteSpace(dir)
+                    || dir[0] == '#'){
+                        //comment
+                        continue;
+                    }
+
                     if(Directory.Exists(dir)){
                         sw.WriteLine(templateDiv,dir);
-                        foreach (var file in Directory.EnumerateFiles(dir,"*.mp4",SearchOption.TopDirectoryOnly))
+                        var tempVidList=    from v in  Directory.EnumerateFiles(dir,"*.mp4",SearchOption.TopDirectoryOnly)
+                                            orderby new FileInfo(v).CreationTime descending
+                                            select v;
+                        foreach (var file in tempVidList)
                         {
                             var video = new VideoConfig(){
                                 path = file,
@@ -107,7 +118,7 @@ for (i = 0; i < coll.length; i++) {
                             };
                             Console.WriteLine($"{id} {video}");
                             VideoConfigs.Add(id.ToString(),video);
-                            sw.WriteLine($"<a href=\"/play/{id}\">{video.name}</a><br/>");
+                            sw.WriteLine($"<a href=\"/play/{id}\">{video.name} {new FileInfo(file).LastWriteTime}</a><br/>");
                             id++;
                         }
                         sw.WriteLine("</div>");
