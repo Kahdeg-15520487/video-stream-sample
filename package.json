@@ -14,9 +14,11 @@
   "dependencies": {
     "config": "^2.0.1",
     "express": "^4.15.3",
+    "formidable": "^1.2.1",
     "jade": "^1.11.0",
     "linux-mountutils": "^1.0.2",
     "nodemon": "^1.11.0",
-    "pug": "^2.0.0-rc.4"
+    "pug": "^2.0.0-rc.4",
+    "video-thumbnail-generator": "^1.1.3"
   }
 }

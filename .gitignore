@@ -13,6 +13,11 @@ node_modules
 videoConfig.json
 videoList.html
 dir.txt
+log.txt
+
+# thumbnail image
+thumbnail
+public/thumbnail
 
 # Logs
 logs

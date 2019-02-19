@@ -4,21 +4,28 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using ImageMagick;
+using Xabe.FFmpeg;
+using Xabe.FFmpeg.Model;
+using Xabe.FFmpeg.Enums;
+using System.Threading.Tasks;
 
 namespace video_stream_sample
 {
-    class VideoConfig{
-        public string path{get;set;}
-        public string name{get;set;}
-        public string desc{get;set;}
+    class VideoConfig
+    {
+        public string path { get; set; }
+        public string name { get; set; }
+        public string desc { get; set; }
 
-        public override string ToString(){
+        public override string ToString()
+        {
             return $"{name} {desc} {path}";
         }
     }
     class Program
     {
-        const string templateHead = 
+        const string templateHead =
 @"<html>
 <head>
 <meta name=""viewport"" content=""width=device-width, initial-scale=1"">
@@ -75,50 +82,68 @@ for (i = 0; i < coll.length; i++) {
 </body>
 </html>
 ";
-        static string[] ReadConfig(){
+        static string[] ReadConfig()
+        {
             return File.ReadAllLines("dir.txt");
         }
 
         static void Main(string[] args)
         {
             string[] dirs;
-            if(args.Length > 0){
+            if (args.Length > 0)
+            {
                 dirs = args;
             }
-            else{
+            else
+            {
                 dirs = ReadConfig();
             }
 
-            Dictionary<string,VideoConfig> VideoConfigs = new Dictionary<string, VideoConfig>();
+            Dictionary<string, VideoConfig> VideoConfigs = new Dictionary<string, VideoConfig>();
             StringBuilder videoList = new StringBuilder();
             int id = 1000;
+
+            if (Directory.Exists("public\\thumbnail\\"))
+            {
+                //Directory.Delete("thumbnail", true);
+            }
+            else
+            {
+                Directory.CreateDirectory("public\\thumbnail\\");
+            }
+
             using (StringWriter sw = new StringWriter(videoList))
             {
                 sw.WriteLine(templateHead);
                 sw.WriteLine($"<a href=\"refresh\">refresh</a>");
                 foreach (var dir in dirs)
                 {
-                    if(string.IsNullOrWhiteSpace(dir)
-                    || dir[0] == '#'){
+                    if (string.IsNullOrWhiteSpace(dir)
+                    || dir[0] == '#')
+                    {
                         //comment
                         continue;
                     }
 
-                    if(Directory.Exists(dir)){
-                        sw.WriteLine(templateDiv,dir);
-                        var tempVidList=    from v in  Directory.EnumerateFiles(dir,"*.mp4",SearchOption.TopDirectoryOnly)
-                                            orderby new FileInfo(v).CreationTime descending
-                                            select v;
+                    if (Directory.Exists(dir))
+                    {
+                        sw.WriteLine(templateDiv, dir);
+                        var tempVidList = from v in Directory.EnumerateFiles(dir, "*.mp4", SearchOption.TopDirectoryOnly)
+                                          orderby new FileInfo(v).CreationTime descending
+                                          select v;
                         foreach (var file in tempVidList)
                         {
-                            var video = new VideoConfig(){
+                            var video = new VideoConfig()
+                            {
                                 path = file,
                                 name = Path.GetFileNameWithoutExtension(file),
                                 desc = "lorem"
                             };
+                            var thumbnail = GenerateThumbnail(file, "public\\thumbnail\\" + id.ToString() + FileExtensions.Png)
+                                            .GetAwaiter().GetResult();
                             Console.WriteLine($"{id} {video}");
-                            VideoConfigs.Add(id.ToString(),video);
-                            sw.WriteLine($"<a href=\"/play/{id}\">{video.name} {new FileInfo(file).LastWriteTime}</a><br/>");
+                            VideoConfigs.Add(id.ToString(), video);
+                            sw.WriteLine($"<p> {video.name} {new FileInfo(file).LastWriteTime} </p><a href=\"/play/{id}\" target=\"_blank\"><img alt=\"{video.name} {new FileInfo(file).LastWriteTime}\" src={thumbnail} width=\"100\" height=\"100\"/></a><br/><br/>");
                             id++;
                         }
                         sw.WriteLine("</div>");
@@ -126,8 +151,26 @@ for (i = 0; i < coll.length; i++) {
                 }
                 sw.WriteLine(templateEnd);
             }
-            File.WriteAllText("videoConfig.json",JsonConvert.SerializeObject(VideoConfigs,Formatting.Indented));
-            File.WriteAllText("videoList.html",videoList.ToString());
+            File.WriteAllText("videoConfig.json", JsonConvert.SerializeObject(VideoConfigs, Formatting.Indented));
+            File.WriteAllText("videoList.html", videoList.ToString());
+        }
+
+        private static async Task<string> GenerateThumbnail(string file, string output)
+        {
+            //string output = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + FileExtensions.Png);
+            if (!File.Exists(output))
+            {
+                try
+                {
+                    IConversionResult result = await Conversion.Snapshot(file, output, TimeSpan.FromSeconds(0))
+                                                               .Start();
+                }
+                catch (Exception ex)
+                {
+                    File.AppendAllText("log.txt", file + " " + output + Environment.NewLine + ex.ToString() + Environment.NewLine + ex.StackTrace);
+                }
+            }
+            return output;
         }
     }
 }
