@@ -139,11 +139,11 @@ for (i = 0; i < coll.length; i++) {
                                 name = Path.GetFileNameWithoutExtension(file),
                                 desc = "lorem"
                             };
-                            var thumbnail = GenerateThumbnail(file, "public\\thumbnail\\" + id.ToString() + FileExtensions.Png)
-                                            .GetAwaiter().GetResult();
+                            var path = "thumbnail\\" + id.ToString() + FileExtensions.Png;
+                            GenerateThumbnail(file, "public\\" + path);
                             Console.WriteLine($"{id} {video}");
                             VideoConfigs.Add(id.ToString(), video);
-                            sw.WriteLine($"<p> {video.name} {new FileInfo(file).LastWriteTime} </p><a href=\"/play/{id}\" target=\"_blank\"><img alt=\"{video.name} {new FileInfo(file).LastWriteTime}\" src={thumbnail} width=\"100\" height=\"100\"/></a><br/><br/>");
+                            sw.WriteLine($"<p> {video.name} {new FileInfo(file).LastWriteTime} </p><a href=\"/play/{id}\" target=\"_blank\"><img alt=\"{video.name} {new FileInfo(file).LastWriteTime}\" src={path} width=\"100\" height=\"100\"/></a><br/><br/>");
                             id++;
                         }
                         sw.WriteLine("</div>");
@@ -155,7 +155,7 @@ for (i = 0; i < coll.length; i++) {
             File.WriteAllText("videoList.html", videoList.ToString());
         }
 
-        private static async Task<string> GenerateThumbnail(string file, string output)
+        private static async void GenerateThumbnail(string file, string output)
         {
             //string output = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + FileExtensions.Png);
             if (!File.Exists(output))
@@ -170,7 +170,6 @@ for (i = 0; i < coll.length; i++) {
                     File.AppendAllText("log.txt", file + " " + output + Environment.NewLine + ex.ToString() + Environment.NewLine + ex.StackTrace);
                 }
             }
-            return output;
         }
     }
 }

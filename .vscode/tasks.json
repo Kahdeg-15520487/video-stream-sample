@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/cs/video-stream-sample.csproj"
+                "${workspaceFolder}/video-stream-sample.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
