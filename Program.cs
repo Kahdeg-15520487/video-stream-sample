@@ -143,7 +143,7 @@ for (i = 0; i < coll.length; i++) {
                             GenerateThumbnail(file, "public\\" + path);
                             Console.WriteLine($"{id} {video}");
                             VideoConfigs.Add(id.ToString(), video);
-                            sw.WriteLine($"<p> {video.name} {new FileInfo(file).LastWriteTime} </p><a href=\"/play/{id}\" target=\"_blank\"><img alt=\"{video.name} {new FileInfo(file).LastWriteTime}\" src={path} width=\"100\" height=\"100\"/></a><br/><br/>");
+                            sw.WriteLine($"<p> {video.name} {new FileInfo(file).LastWriteTime} </p><a href=\"/player/{id}\" target=\"_blank\"><img alt=\"{video.name} {new FileInfo(file).LastWriteTime}\" src={path} width=\"100\" height=\"100\"/></a><br/><br/>");
                             id++;
                         }
                         sw.WriteLine("</div>");

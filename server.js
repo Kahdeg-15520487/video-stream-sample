@@ -1,4 +1,5 @@
 const express = require('express')
+const srt2vtt = require('srt-to-vtt')
 const fs = require('fs')
 const path = require('path')
 const formidable = require('formidable');
@@ -40,6 +41,38 @@ app.get('/refresh/', function (req, res) {
   });
   res.redirect('/');
 });
+app.get('/player/:VIDEO',function(req,res){
+  var videoID = req.params.VIDEO.toString();
+  res.render('player', {source: '/play/'+videoID,caption: '/caption/'+videoID})
+})
+// Get Video Caption
+app.get('/caption/:VIDEO', function(req,res){
+  var videoID = req.params.VIDEO.toString();
+  if (videoJson.hasOwnProperty(videoID)) {
+    //var path = "/home/clarkhacks/UsbStick/movies" + videoJson[videoID].path // Path To Movies
+    let path = videoJson[videoID].path // Path To Movies
+    let srtfile = path.substr(0, path.lastIndexOf(".")) + ".srt";
+    let vttfile = path.substr(0, path.lastIndexOf(".")) + ".vtt";
+    fs.access(srtfile,fs.F_OK,(err)=>{
+      let srtExist = true;
+      if(err){
+        srtExist = false;
+      }
+
+      fs.access(vttfile, fs.F_OK, (err) => {
+        if (err) {
+          if(srtExist){
+            fs.createReadStream(srtfile)
+              .pipe(srt2vtt())
+              .pipe(fs.createWriteStream(vttfile))
+          }
+        }
+        console.log(err);
+        res.sendFile(vttfile);
+      })
+    })
+  }
+})
 // Get Video To Play
 app.get('/play/:VIDEO', function (req, res) {
   var videoID = req.params.VIDEO.toString();
